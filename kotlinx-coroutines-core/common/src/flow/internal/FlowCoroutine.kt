@@ -10,7 +10,7 @@ import kotlinx.coroutines.internal.*
 import kotlinx.coroutines.intrinsics.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
-import kotlinx.coroutines.flow.unsafeFlow as flow
+//import kotlinx.coroutines.flow.unsafeFlow as flow
 
 /**
  * Creates a [CoroutineScope] and calls the specified suspend block with this scope.
@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.unsafeFlow as flow
  */
 internal suspend fun <R> flowScope(@BuilderInference block: suspend CoroutineScope.() -> R): R =
     suspendCoroutineUninterceptedOrReturn { uCont ->
-        val coroutine = FlowCoroutine(uCont.context, uCont)
+        val coroutine = FlowCoroutine<R>(uCont.context, uCont)
         coroutine.startUndispatchedOrReturn(coroutine, block)
     }
 
@@ -46,9 +46,9 @@ internal suspend fun <R> flowScope(@BuilderInference block: suspend CoroutineSco
  * To cancel child without cancelling itself, `cancel(ChildCancelledException())` should be used.
  */
 internal fun <R> scopedFlow(@BuilderInference block: suspend CoroutineScope.(FlowCollector<R>) -> Unit): Flow<R> =
-    flow {
+    flow<R> {
         val collector = this
-        flowScope { block(collector) }
+        flowScope<Unit> { block(collector) }
     }
 
 internal class FlowCoroutine<T>(context: CoroutineContext, uCont: Continuation<T>) :

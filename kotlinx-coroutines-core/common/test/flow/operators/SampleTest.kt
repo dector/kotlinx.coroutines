@@ -177,17 +177,27 @@ class SampleTest : TestBase() {
     private inline fun <reified T: Throwable> testUpstreamError(cause: T) = runTest {
         val latch = Channel<Unit>()
         val flow = flow<Int> {
+            println("Expecting 1")
             expect(1)
             emit(1)
+            println("Expecting 2")
             expect(2)
+            println("Receiving")
             latch.receive()
+            println("Received")
             throw cause
         }.sample(1).onEach {
+            println("Sending")
             latch.send(Unit)
-            hang { expect(3) }
+            println("Sent")
+            hang {
+                println("Expecting 3")
+                expect(3)
+            }
         }
 
         assertFailsWith<T>(flow)
+        println("Expecting 4")
         finish(4)
     }
 
