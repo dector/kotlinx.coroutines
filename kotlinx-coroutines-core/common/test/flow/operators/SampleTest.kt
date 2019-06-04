@@ -220,19 +220,32 @@ class SampleTest : TestBase() {
     fun testUpstreamErrorIsolatedContext() = runTest {
         val latch = Channel<Unit>()
         val flow = flow {
+            println("checking upstream")
             assertEquals("upstream", NamedDispatchers.name())
+            println("Expect 1")
             expect(1)
             emit(1)
+            println("Expect 2")
             expect(2)
+            println("Receiving")
             latch.receive()
+            println("Received")
             throw TestException()
         }.flowOn(NamedDispatchers("upstream")).sample(1).map {
+            println("Sending")
             latch.send(Unit)
-            hang { expect(3) }
+            println("Sent")
+            hang {
+                println("Expecting 3")
+                expect(3)
+                println("Expected")
+            }
         }
 
         assertFailsWith<TestException>(flow)
+        println("Finish")
         finish(4)
+        println("Finished")
     }
 
     @Test
