@@ -176,13 +176,13 @@ class SampleTest : TestBase() {
 
     private inline fun <reified T: Throwable> testUpstreamError(cause: T) = runTest {
         val latch = Channel<Unit>()
-        val flow = flow {
+        val flow = flow<Int> {
             expect(1)
             emit(1)
             expect(2)
             latch.receive()
             throw cause
-        }.sample(1).map {
+        }.sample(1).onEach {
             latch.send(Unit)
             hang { expect(3) }
         }
