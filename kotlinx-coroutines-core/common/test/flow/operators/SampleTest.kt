@@ -193,12 +193,18 @@ class SampleTest : TestBase() {
             hang {
                 println("Expecting 3")
                 expect(3)
+                println("Expected 3")
             }
         }
 
         assertFailsWith<T>(flow)
         println("Expecting 4")
-        finish(4)
+        try {
+            finish(4)
+        } catch (e: Throwable) {
+            println("AAAAAA: $e")
+        }
+        println("Expected 4")
     }
 
     @Test
