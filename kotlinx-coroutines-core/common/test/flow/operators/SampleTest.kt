@@ -205,6 +205,15 @@ class SampleTest : TestBase() {
             println("AAAAAA: $e")
         }
         println("Expected 4")
+        coroutineContext[Job].print()
+    }
+
+    fun Job?.print(indent: String = "") {
+        if (this === null) return
+        println(indent + this)
+        children.forEach {
+            println(indent + "\t" + it)
+        }
     }
 
     @Test
