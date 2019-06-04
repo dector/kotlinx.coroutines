@@ -250,6 +250,7 @@ class SampleTest : TestBase() {
 
     @Test
     fun testUpstreamErrorSampleNotTriggered() = runTest {
+        println("testUpstreamErrorSampleNotTriggered")
         val flow = flow {
             expect(1)
             emit(1)
@@ -264,6 +265,7 @@ class SampleTest : TestBase() {
 
     @Test
     fun testUpstreamErrorSampleNotTriggeredInIsolatedContext() = runTest {
+        println("testUpstreamErrorSampleNotTriggeredInIsolatedContext")
         val flow = flow {
             expect(1)
             emit(1)
