@@ -215,38 +215,39 @@ class SampleTest : TestBase() {
             println(indent + "\t" + it)
         }
     }
-//
-//    @Test
-//    fun testUpstreamErrorIsolatedContext() = runTest {
-//        val latch = Channel<Unit>()
-//        val flow = flow {
-//            println("checking upstream")
-//            assertEquals("upstream", NamedDispatchers.name())
-//            println("Expect 1")
-//            expect(1)
-//            emit(1)
-//            println("Expect 2")
-//            expect(2)
-//            println("Receiving")
-//            latch.receive()
-//            println("Received")
-//            throw TestException()
-//        }.flowOn(NamedDispatchers("upstream")).sample(1).map {
-//            println("Sending")
-//            latch.send(Unit)
-//            println("Sent")
-//            hang {
-//                println("Expecting 3")
-//                expect(3)
-//                println("Expected")
-//            }
-//        }
-//
-//        assertFailsWith<TestException>(flow)
-//        println("Finish")
-//        finish(4)
-//        println("Finished")
-//    }
+
+    @Test
+    fun testUpstreamErrorIsolatedContext() = runTest {
+        val latch = Channel<Unit>()
+        val flow = flow {
+            println("checking upstream")
+            assertEquals("upstream", NamedDispatchers.name())
+            println("Expect 1")
+            expect(1)
+            emit(1)
+            println("Expect 2")
+            expect(2)
+            println("Receiving")
+            latch.receive()
+            println("Received")
+            throw TestException()
+        }.flowOn(NamedDispatchers("upstream")).sample(1).map {
+            println("Sending")
+            latch.send(Unit)
+            println("Sent")
+            hang {
+                println("Expecting 3")
+                expect(3)
+                println("Expected")
+            }
+        }
+
+        assertFailsWith<TestException>(flow)
+        println("Finish")
+        finish(4)
+        println("Finished")
+        coroutineContext[Job].print()
+    }
 
     @Test
     fun testUpstreamErrorSampleNotTriggered() = runTest {
